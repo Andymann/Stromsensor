@@ -183,7 +183,13 @@ void setup() {
   strip.show(); // Initialize all pixels to 'off'
   
   colorWipe(strip.Color(255, 0, 255), 50); // VIO
+  wdt_reset();
+  delay(500);
+  colorWipe(strip.Color(0, 255, 0), 50); // GRE
+  wdt_reset();
 
+
+  
   // Start the software serial port, to another device
   RS485Serial.begin(9600);   // set the data rate
   RS485Serial.listen();
@@ -258,13 +264,16 @@ void sendData(byte pVal) {
 */
 
 boolean bCmdComplete = false;
-
+boolean bLED = true;
 
 void loop() {
 
-  uint8_t iVal = getPhone1Connect();
-  Serial.print("val:");Serial.println(iVal, DEC);
+  uint8_t iVal = getCurrentSensorValue(); //queryPhone1();
+  //Serial.print("val:");Serial.println(iVal, DEC);
+  RS485Serial.print("val:");RS485Serial.println(iVal, DEC);
   delay(1000);
+  digitalWrite(LED, bLED);
+  bLED = !bLED;
 /*
   uint8_t r = 0;
   byte bRX[3]= {0, 0, 0};
@@ -513,10 +522,11 @@ uint8_t queryPhone0() {
 uint8_t queryPhone1() {
   uint8_t iReturn = 0x00;
   int iVal = analogRead(HANDY1DETECT);
-  int iTemp = map(iVal, 0, 1023, 0, 4000);
-  iReturn = 4001 - iTemp;
+  //int iTemp = map(iVal, 0, 1023, 0, 4000);
+  //iReturn = /*4001 -*/ iTemp;
   //iReturn = iVal;
-  return iReturn;
+  //return iReturn;
+  return iVal;
 }
 
 
